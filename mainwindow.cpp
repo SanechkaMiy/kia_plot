@@ -25,36 +25,6 @@ MainWindow::~MainWindow()
 
 void MainWindow::start_get_data()
 {
-
-    //        m_kia_plot_settings->m_kia_threads->m_get_data_stop = true;
-    //        double r_x = 0;
-    //        double r_y = 0;
-    //        while(m_kia_plot_settings->m_kia_threads->m_get_data_stop)
-    //        {
-
-    //            std::this_thread::sleep_for(std::chrono::seconds(1));
-    //            key = QDateTime::currentDateTime().toMSecsSinceEpoch()/1000.0;
-    //            m_x = 1 + rand() % 3;
-    //            m_y = 1 + m_y;
-    //            r_x = r_x + 1;
-    //            r_y = r_y + 0.5;
-    //            m_xv.append(key);
-    //            m_yv.append(m_y);
-    //            m_plot->graph(0)->setData(m_xv, m_yv);
-    //            m_plot->replot();
-    //            m_plot->update();
-    //            m_plot->xAxis->setRange(key+0.25, 16);
-    //            qDebug() << key;
-    ////            if (m_xv.first() < r_x)
-    ////            {
-    ////                qDebug() <<"remove";
-    ////                m_xv.remove();
-    ////                m_xv.removeFirst();
-    ////                m_yv.removeFirst();
-    ////            }
-    //        }
-    //    });
-
     QSharedPointer<QCPAxisTickerTime> timeTicker(new QCPAxisTickerTime);
     timeTicker->setTimeFormat("%h:%m:%s");
     m_plot->xAxis->setTicker(timeTicker);
