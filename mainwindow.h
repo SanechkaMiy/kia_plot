@@ -3,6 +3,7 @@
 #include "kia_struct.h"
 #include <QMainWindow>
 #include <qcustomplot.h>
+#include "kia_db.h"
 #include <QLayout>
 #include <QTimer>
 namespace Ui {
@@ -19,12 +20,13 @@ public:
 private slots:
     void realtimeDataSlot();
 private:
+    Ui::MainWindow *ui;
+    std::shared_ptr<Kia_plot_settings> m_kia_plot_settings;
+    std::shared_ptr<Kia_db> m_kia_db;
     double m_x = 0;
     double m_y = 0;
     void start_get_data();
     void stop_get_data();
-    std::shared_ptr<Kia_plot_settings> m_kia_plot_settings;
-    Ui::MainWindow *ui;
     QCustomPlot* m_plot;
     QVector<double> m_xv, m_yv;
     double key = 0;

@@ -4,10 +4,9 @@
 #
 #-------------------------------------------------
 
-QT       += core gui printsupport
-
+QT       += core gui printsupport sql
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
-
+CONFIG += c++17
 TARGET = kia_plot
 TEMPLATE = app
 
@@ -22,13 +21,16 @@ DEFINES += QT_DEPRECATED_WARNINGS
 # You can also select to disable deprecated APIs only up to a certain version of Qt.
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
+# Default rules for deployment.
 
 SOURCES += \
+    kia_db.cpp \
         main.cpp \
         mainwindow.cpp \
     qcustomplot.cpp
 
 HEADERS += \
+    kia_db.h \
         mainwindow.h \
     qcustomplot.h \
     kia_struct.h

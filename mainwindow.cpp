@@ -4,7 +4,8 @@
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow),
-    m_kia_plot_settings(new Kia_plot_settings())
+    m_kia_plot_settings(new Kia_plot_settings()),
+    m_kia_db(new Kia_db())
 {
     ui->setupUi(this);
     m_plot = new QCustomPlot(this);
