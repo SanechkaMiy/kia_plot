@@ -1,10 +1,13 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 #include "kia_struct.h"
+#include <iostream>
 #include <QMainWindow>
 #include <qcustomplot.h>
+
 #include "kia_db.h"
 #include <QLayout>
+#include <QTime>
 #include <QTimer>
 namespace Ui {
 class MainWindow;

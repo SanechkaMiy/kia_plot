@@ -1,9 +1,3 @@
-#-------------------------------------------------
-#
-# Project created by QtCreator 2023-09-09T11:42:48
-#
-#-------------------------------------------------
-
 QT       += core gui printsupport sql
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 CONFIG += c++17
@@ -34,6 +28,3 @@ HEADERS += \
         mainwindow.h \
     qcustomplot.h \
     kia_struct.h
-
-FORMS += \
-        mainwindow.ui
