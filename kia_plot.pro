@@ -19,12 +19,17 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 SOURCES += \
     kia_db.cpp \
+    kia_graph.cpp \
         main.cpp \
         mainwindow.cpp \
     qcustomplot.cpp
 
 HEADERS += \
     kia_db.h \
+    kia_graph.h \
         mainwindow.h \
     qcustomplot.h \
     kia_struct.h
+
+FORMS += \
+    kia_graph.ui

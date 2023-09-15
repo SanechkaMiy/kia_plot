@@ -29,7 +29,7 @@ void Kia_db::get_data_from_db(const QString &begin, const QString &end)
 {
     m_kia_plot_settings->m_kias_db->m_x_value.clear();
     m_kia_plot_settings->m_kias_db->m_y_value.clear();
-    qDebug() << begin << end;
+    //qDebug() << begin << end;
     QSqlQuery query;
 
     if (!query.exec("SELECT datetime, bshv FROM bokzm60.mshior "
@@ -48,6 +48,6 @@ void Kia_db::get_data_from_db(const QString &begin, const QString &end)
         bshv = query.value(rec.indexOf("bshv")).toInt();
         m_kia_plot_settings->m_kias_db->m_x_value.push_back(date_time.time());
         m_kia_plot_settings->m_kias_db->m_y_value.push_back(bshv);
-        qDebug() <<  date_time.time() << bshv;
+        //qDebug() <<  date_time.time() << bshv;
     }
 }
