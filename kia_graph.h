@@ -22,6 +22,7 @@ public:
                        QWidget *parent = nullptr);
     ~Kia_graph();
     void add_plot_on_widget();
+    QCustomPlot* get_plot();
 private slots:
     void get_data_from_db_slot();
     void change_range_slot();
@@ -36,10 +37,9 @@ private:
     QTimer data_timer;
     QTimer range_timer;
     QVector<double> m_xData, m_yData;
-    std::atomic_bool m_is_change_range{true};
+
     QCPRange m_range;
     double m_start_time = 0;
-    double m_key = 0;
 };
 
 #endif // KIA_GRAPH_H

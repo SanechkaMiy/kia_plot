@@ -16,7 +16,11 @@
   <widget class="QWidget" name="centralWidget">
    <layout class="QGridLayout" name="gridLayout_2">
     <item row="0" column="0">
-     <layout class="QGridLayout" name="gl_plots"/>
+     <widget class="QPushButton" name="pushButton">
+      <property name="text">
+       <string>bum</string>
+      </property>
+     </widget>
     </item>
    </layout>
   </widget>
@@ -26,7 +30,7 @@
      <x>0</x>
      <y>0</y>
      <width>570</width>
-     <height>22</height>
+     <height>23</height>
     </rect>
    </property>
   </widget>

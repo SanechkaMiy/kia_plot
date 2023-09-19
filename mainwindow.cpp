@@ -8,15 +8,10 @@ MainWindow::MainWindow(QWidget *parent) :
     m_kia_db(new Kia_db(m_kia_plot_settings))
 {
     ui->setupUi(this);
-    m_kia_graph.push_back(std::make_shared<Kia_graph>(m_kia_db, m_kia_plot_settings, this));
-    //m_kia_graph.push_back(std::make_shared<Kia_graph>(m_kia_db, m_kia_plot_settings, this));
-    m_kia_graph[0]->show();
-    //m_kia_graph[1]->show();
+    m_kia_graph_manager.reset(new Kia_graph_manager(m_kia_db, m_kia_plot_settings, this));
 }
 
 MainWindow::~MainWindow()
 {
     delete ui;
 }
-
-
