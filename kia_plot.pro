@@ -34,5 +34,4 @@ HEADERS += \
     kia_struct.h
 
 FORMS += \
-    kia_graph.ui \
     mainwindow.ui

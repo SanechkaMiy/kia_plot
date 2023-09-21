@@ -4,7 +4,6 @@
 #include "kia_graph_manager.h"
 #include <iostream>
 #include <QMainWindow>
-#include "kia_db.h"
 #include <QLayout>
 #include <QTime>
 #include <QTimer>
@@ -23,7 +22,6 @@ public:
 private:
     Ui::MainWindow *ui;
     std::shared_ptr<Kia_plot_settings> m_kia_plot_settings;
-    std::shared_ptr<Kia_db> m_kia_db;
     std::shared_ptr<Kia_graph_manager> m_kia_graph_manager;
 };
 

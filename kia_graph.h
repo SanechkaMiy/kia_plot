@@ -1,45 +1,33 @@
 #ifndef KIA_GRAPH_H
 #define KIA_GRAPH_H
-
-#include <QDialog>
 #include "kia_struct.h"
 #include "kia_db.h"
+#include <future>
 #include <qcustomplot.h>
-#include <QLayout>
-#include <QTime>
-#include <QTimer>
-namespace Ui {
-class Kia_graph;
-}
 
-class Kia_graph : public QDialog
+class Kia_graph : public QCustomPlot
 {
     Q_OBJECT
-
 public:
-    explicit Kia_graph(std::shared_ptr<Kia_db> kia_db,
-                       std::shared_ptr<Kia_plot_settings> kia_plot_settings,
-                       QWidget *parent = nullptr);
-    ~Kia_graph();
-    void add_plot_on_widget();
-    QCustomPlot* get_plot();
+    Kia_graph(std::shared_ptr<Kia_db> kia_db,
+              std::shared_ptr<Kia_plot_settings> kia_plot_settings, QWidget *parent = nullptr);
+signals:
+    void get_data_from_db(QString, QString);
+    void send_data_on_plot();
 private slots:
+    //void get_data_from_db_slot();
     void get_data_from_db_slot();
-    void change_range_slot();
+    void set_data_on_plot_slot();
 private:
-    void add_data();
-    void change_range();
-    Ui::Kia_graph *ui;
+    void start_data_timer();
+    void init_plot();
+    void set_style();
     std::shared_ptr<Kia_db> m_kia_db;
     std::shared_ptr<Kia_plot_settings> m_kia_plot_settings;
-    QCustomPlot* m_plot;
-    QHBoxLayout* m_layout_for_plot;
-    QTimer data_timer;
-    QTimer range_timer;
     QVector<double> m_xData, m_yData;
-
-    QCPRange m_range;
     double m_start_time = 0;
+    std::future<void> fut;
+    std::shared_ptr<QTimer> m_timer;
 };
 
 #endif // KIA_GRAPH_H

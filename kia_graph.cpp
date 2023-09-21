@@ -1,63 +1,73 @@
 #include "kia_graph.h"
-#include "ui_kia_graph.h"
-#include <QDebug>
+
 Kia_graph::Kia_graph(std::shared_ptr<Kia_db> kia_db,
                      std::shared_ptr<Kia_plot_settings> kia_plot_settings,
                      QWidget *parent) :
-    QDialog(parent),
-    ui(new Ui::Kia_graph),
+    QCustomPlot(parent),
     m_kia_db(kia_db),
     m_kia_plot_settings(kia_plot_settings)
 {
-    ui->setupUi(this);
-    add_plot_on_widget();
-    add_data();
-    change_range();
+    init_plot();
+    connect(this, SIGNAL(get_data_from_db(QString, QString)), m_kia_db.get(), SLOT(get_data_from_db_slot(QString, QString)));
+    connect(this, SIGNAL(send_data_on_plot()), this, SLOT(set_data_on_plot_slot()));
 }
 
-Kia_graph::~Kia_graph()
+void Kia_graph::init_plot()
 {
-    delete ui;
+
+    set_style();
+    setAttribute(Qt::WA_OpaquePaintEvent);
+    setNoAntialiasingOnDrag(true);
+    setInteraction(QCP::iRangeDrag, true);
+    setInteraction(QCP::iRangeZoom, true);
+    addGraph();
+    graph()->setScatterStyle(QCPScatterStyle::ssDisc);
+    graph()->setLineStyle(QCPGraph::lsNone);
+    setContextMenuPolicy(Qt::CustomContextMenu);
 }
 
-void Kia_graph::add_plot_on_widget()
+void Kia_graph::set_style()
 {
-    m_layout_for_plot = new QHBoxLayout(this);
-    m_plot = new QCustomPlot(this);
-    m_plot->setInteraction(QCP::iRangeDrag, true);
-    m_plot->setInteraction(QCP::iRangeZoom, true);
-
-    //    connect(m_plot->xAxis, qOverload<const QCPRange&>(&QCPAxis::rangeChanged),
-    //            this, [this](const QCPRange& range)
-    //    {
-
-    //        qDebug() << m_kia_plot_settings->m_kias_graph->m_key;
-    //       //m_plot->xAxis->setRange(range);
-    //    });
-
-
-    m_plot->addGraph();
-    m_plot->graph(0)->setScatterStyle(QCPScatterStyle::ssDisc);
-    m_plot->graph(0)->setLineStyle(QCPGraph::lsNone);
-    m_layout_for_plot->addWidget(m_plot);
-}
-
-QCustomPlot *Kia_graph::get_plot()
-{
-    return m_plot;
+    QList<QCPAxis*> axises  = {xAxis, yAxis};
+    for (auto a : axises)
+    {
+        a->setBasePen(QPen(Qt::black, 1));
+        a->setTickPen(QPen(Qt::black, 1));
+        a->setSubTickPen(QPen(Qt::black, 1));
+        a->setTickLabelColor(Qt::black);
+        a->grid()->setPen(QPen(Qt::gray, 1, Qt::DotLine));
+        //a->grid()->setSubGridPen(QPen(Qt::gray, 0, Qt::DotLine));
+        a->grid()->setSubGridVisible(false);
+        a->grid()->setZeroLinePen(Qt::NoPen);
+        a->setLabelColor(Qt::black);
+        QFont font("JetBrains Mono ExtraLight", 10);
+        a->setLabelFont(font);
+        a->setTickLabelFont(font);
+    }
+    setBackground(QColor{255,255,255});
+    replot();
 }
 
 void Kia_graph::get_data_from_db_slot()
 {
-    static QTime timeStart = QTime::currentTime();
-    double key = timeStart.msecsTo(QTime::currentTime()) / 1000.0;
-    static double last_point_key = 0;
-
-    QTime begin = QTime(0, 0, 0).addMSecs((m_plot->xAxis->range().lower) * 1000);
-    QTime end = QTime(0, 0, 0).addMSecs((m_plot->xAxis->range().upper) * 1000);
-    m_kia_db->get_data_from_db(begin.toString("hh:mm:ss.zzz"), end.toString("hh:mm:ss.zzz"));
-    if (key - last_point_key >= 1)
+    fut = std::async([this]()
     {
+        QTime begin = QTime(0, 0, 0).addMSecs((xAxis->range().lower) * 1000);
+        QTime end = QTime(0, 0, 0).addMSecs((xAxis->range().upper) * 1000);
+        emit get_data_from_db(begin.toString("hh:mm:ss.zzz"), end.toString("hh:mm:ss.zzz"));
+        emit send_data_on_plot();
+    });
+
+}
+
+void Kia_graph::set_data_on_plot_slot()
+{
+    double key = QTime(0, 0, 0).msecsTo(QTime::currentTime()) / 1000.0;
+    static double last_point_key = 0;
+    //qDebug() << QTime::currentTime();
+
+//    if (key - last_point_key >= 1)
+//    {
         for (uint16_t ind = 0; ind < m_kia_plot_settings->m_kias_db->m_x_value.size(); ind++)
         {
             QTime timeStart = m_kia_plot_settings->m_kias_db->m_x_value[ind].toTime();
@@ -65,42 +75,18 @@ void Kia_graph::get_data_from_db_slot()
             m_xData.push_back(key);
             m_yData.push_back(m_kia_plot_settings->m_kias_db->m_y_value[ind].toInt());
         }
-        m_plot->graph(0)->setData(m_xData, m_yData);
+        graph()->setData(m_xData, m_yData);
         m_xData.clear();
         m_yData.clear();
-        last_point_key = key;
-    }
-}
 
-void Kia_graph::change_range_slot()
-{
+//        last_point_key = key;
+//    }
     if (m_kia_plot_settings->m_kias_graph->m_is_change_range)
     {
         m_kia_plot_settings->m_kias_graph->m_key = m_kia_plot_settings->m_kias_graph->m_key + 1 / 1000.0;
-        m_plot->xAxis->setRange(m_kia_plot_settings->m_kias_graph->m_key, m_kia_plot_settings->m_kias_graph->m_size, Qt::AlignRight);
-        m_plot->replot();
+        xAxis->setRange(m_kia_plot_settings->m_kias_graph->m_key, m_kia_plot_settings->m_kias_graph->m_size, Qt::AlignRight);
+        replot(QCustomPlot::rpQueuedReplot);
+        update();
+
     }
-}
-
-void Kia_graph::add_data()
-{
-    QSharedPointer<QCPAxisTickerTime> timeTicker(new QCPAxisTickerTime);
-    timeTicker->setTimeFormat("%h:%m:%s");
-    m_plot->xAxis->setTicker(timeTicker);
-    m_plot->axisRect()->setupFullAxesBox();
-    m_plot->yAxis->setRange(-1.2, 1.2);
-    QTime start = QTime(0, 0, 0).fromString(QString("16:47:48.348"), "hh:mm:ss.zzz");
-    m_start_time = QTime(0, 0, 0).msecsTo(start) / 1000.0;
-    m_plot->xAxis->setRange(m_start_time, 8, Qt::AlignRight);
-    m_kia_plot_settings->m_kias_graph->m_key = m_start_time;
-    connect(m_plot->xAxis, SIGNAL(rangeChanged(QCPRange)), m_plot->xAxis2, SLOT(setRange(QCPRange)));
-    connect(m_plot->yAxis, SIGNAL(rangeChanged(QCPRange)), m_plot->yAxis2, SLOT(setRange(QCPRange)));
-    connect(&data_timer, SIGNAL(timeout()), this, SLOT(get_data_from_db_slot()));
-    data_timer.start(0); // Interval 0 means to refresh as fast as possible
-}
-
-void Kia_graph::change_range()
-{
-    connect(&range_timer, SIGNAL(timeout()), this, SLOT(change_range_slot()));
-    range_timer.start(0); // Interval 0 means to refresh as fast as possible
 }
