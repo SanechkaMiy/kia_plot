@@ -10,6 +10,7 @@ Kia_graph::Kia_graph(std::shared_ptr<Kia_db> kia_db,
     init_plot();
     connect(this, SIGNAL(get_data_from_db(QString, QString)), m_kia_db.get(), SLOT(get_data_from_db_slot(QString, QString)));
     connect(this, SIGNAL(send_data_on_plot()), this, SLOT(set_data_on_plot_slot()));
+    connect(this, SIGNAL(change_range()), this, SLOT(change_range_slot()));
 }
 
 void Kia_graph::init_plot()
@@ -54,33 +55,37 @@ void Kia_graph::get_data_from_db_slot()
     {
         QTime begin = QTime(0, 0, 0).addMSecs((xAxis->range().lower) * 1000);
         QTime end = QTime(0, 0, 0).addMSecs((xAxis->range().upper) * 1000);
-        emit get_data_from_db(begin.toString("hh:mm:ss.zzz"), end.toString("hh:mm:ss.zzz"));
-        emit send_data_on_plot();
+        if (m_kia_plot_settings->m_kias_graph->m_key - last_point_key >= 1)
+        {
+            emit get_data_from_db(begin.toString("hh:mm:ss.zzz"), end.toString("hh:mm:ss.zzz"));
+            emit send_data_on_plot();
+            last_point_key = m_kia_plot_settings->m_kias_graph->m_key;
+        }
+        emit change_range();
     });
 
 }
 
 void Kia_graph::set_data_on_plot_slot()
 {
-    double key = QTime(0, 0, 0).msecsTo(QTime::currentTime()) / 1000.0;
-    static double last_point_key = 0;
     //qDebug() << QTime::currentTime();
 
-//    if (key - last_point_key >= 1)
-//    {
-        for (uint16_t ind = 0; ind < m_kia_plot_settings->m_kias_db->m_x_value.size(); ind++)
-        {
-            QTime timeStart = m_kia_plot_settings->m_kias_db->m_x_value[ind].toTime();
-            double key = QTime(0, 0, 0).secsTo(timeStart);
-            m_xData.push_back(key);
-            m_yData.push_back(m_kia_plot_settings->m_kias_db->m_y_value[ind].toInt());
-        }
-        graph()->setData(m_xData, m_yData);
-        m_xData.clear();
-        m_yData.clear();
 
-//        last_point_key = key;
-//    }
+    for (uint16_t ind = 0; ind < m_kia_plot_settings->m_kias_db->m_x_value.size(); ind++)
+    {
+        QTime timeStart = m_kia_plot_settings->m_kias_db->m_x_value[ind].toTime();
+        double key = QTime(0, 0, 0).secsTo(timeStart);
+        m_xData.push_back(key);
+        m_yData.push_back(m_kia_plot_settings->m_kias_db->m_y_value[ind].toInt());
+    }
+    graph()->setData(m_xData, m_yData);
+    m_xData.clear();
+    m_yData.clear();
+
+}
+
+void Kia_graph::change_range_slot()
+{
     if (m_kia_plot_settings->m_kias_graph->m_is_change_range)
     {
         m_kia_plot_settings->m_kias_graph->m_key = m_kia_plot_settings->m_kias_graph->m_key + 1 / 1000.0;

@@ -14,11 +14,14 @@ public:
 signals:
     void get_data_from_db(QString, QString);
     void send_data_on_plot();
+    void change_range();
 private slots:
     //void get_data_from_db_slot();
     void get_data_from_db_slot();
     void set_data_on_plot_slot();
+    void change_range_slot();
 private:
+    double last_point_key = 0;
     void start_data_timer();
     void init_plot();
     void set_style();
@@ -27,7 +30,6 @@ private:
     QVector<double> m_xData, m_yData;
     double m_start_time = 0;
     std::future<void> fut;
-    std::shared_ptr<QTimer> m_timer;
 };
 
 #endif // KIA_GRAPH_H
