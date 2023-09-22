@@ -8,7 +8,6 @@
 #include <QTime>
 #include <QSqlQuery>
 #include <QSqlField>
-#include <utility>
 class Kia_db : public QObject
 {
     Q_OBJECT

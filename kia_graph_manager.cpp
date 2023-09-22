@@ -10,14 +10,16 @@ Kia_graph_manager::Kia_graph_manager(std::shared_ptr<Kia_plot_settings> kia_plot
 
 void Kia_graph_manager::create_plot_widget(QWidget *parent)
 {
-    for (uint16_t num_graph = 0; num_graph < 20; ++num_graph)
+    for (uint16_t num_graph = 0; num_graph < 5; ++num_graph)
     {
         m_timer = std::make_shared<QTimer>();
         m_timer->start(0);
+        m_dialog.push_back(new QDialog(parent));
+        m_l_for_plots.push_back(new QVBoxLayout(m_dialog[num_graph]));
         m_kia_db.push_back(std::make_shared<Kia_db>("con_" + QString::number(num_graph), m_kia_plot_settings));
-        m_kia_graph.push_back(new Kia_graph(m_kia_db[num_graph], m_kia_plot_settings));
-        //m_l_for_plots->addWidget(m_kia_graph[num_graph]);
-        m_kia_graph[num_graph]->show();
+        m_kia_graph.push_back(new Kia_graph(m_kia_db[num_graph], m_kia_plot_settings, m_dialog[num_graph]));
+        m_l_for_plots[num_graph]->addWidget(m_kia_graph[num_graph]);
+        m_dialog[num_graph]->show();
     }
 }
 

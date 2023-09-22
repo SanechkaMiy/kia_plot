@@ -68,9 +68,6 @@ void Kia_graph::get_data_from_db_slot()
 
 void Kia_graph::set_data_on_plot_slot()
 {
-    //qDebug() << QTime::currentTime();
-
-
     for (uint16_t ind = 0; ind < m_kia_plot_settings->m_kias_db->m_x_value.size(); ind++)
     {
         QTime timeStart = m_kia_plot_settings->m_kias_db->m_x_value[ind].toTime();
@@ -81,7 +78,6 @@ void Kia_graph::set_data_on_plot_slot()
     graph()->setData(m_xData, m_yData);
     m_xData.clear();
     m_yData.clear();
-
 }
 
 void Kia_graph::change_range_slot()

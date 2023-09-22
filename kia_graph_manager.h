@@ -1,6 +1,7 @@
 #ifndef KIA_GRAPH_MANAGER_H
 #define KIA_GRAPH_MANAGER_H
 #include <QObject>
+#include <QDialog>
 #include "kia_graph.h"
 #include "kia_struct.h"
 #include <QTimer>
@@ -16,7 +17,8 @@ private slots:
 private:
     void plots_interactions();
     void start_data_timer(uint16_t& num_plot);
-    QVBoxLayout* m_l_for_plots;
+    QVector<QVBoxLayout*>m_l_for_plots;
+    QVector<QDialog*> m_dialog;
     QVector<Kia_graph*> m_kia_graph;
     QVector<QCustomPlot*> m_plot;
     std::shared_ptr<Kia_plot_settings> m_kia_plot_settings;
